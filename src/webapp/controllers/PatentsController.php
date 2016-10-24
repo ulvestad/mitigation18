@@ -70,7 +70,7 @@ class PatentsController extends Controller
         } else {
             $request     = $this->app->request;
             //surrouding the variable with htmlentities we prevent XSS in the input fields of the "http://tdt4237.idi.ntnu.no:5018/patents/new"
-            //htmlentites converts the special characters to proper HTML entiets, eg: ˝ -> &Euml; and  " -> &quot;
+            //htmlentites function encodes all possible characters, eg: ˝ -> &Euml; and  " -> &quot;
             $title       = htmlentities($request->post('title'));
             $description = htmlentities($request->post('description'));
             $company     = htmlentities($request->post('company'));
