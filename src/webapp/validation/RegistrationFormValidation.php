@@ -27,8 +27,12 @@ class RegistrationFormValidation
 
     private function validate($username, $password, $first_name, $last_name, $phone, $company)
     {
-        if (empty($password)) {
-            $this->validationErrors[] = 'Password cannot be empty';
+         // Password validation
+        if (strlen($password) < 8) {
+            $this->validationErrors[] = 'Password has to be at least 8 characters long';
+        }
+        else if (preg_match('/^[A-Za-z0-9_]+$/', $password) === 0) {
+            $this->validationErrors[] = 'Password can only contain big and small letters and numbers';
         }
 
         if(empty($first_name)) {
