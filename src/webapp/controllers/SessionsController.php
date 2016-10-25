@@ -27,8 +27,10 @@ class SessionsController extends Controller
     public function create()
     {
         $request = $this->app->request;
-        $user    = $request->post('user');
-        $pass    = $request->post('pass');
+        //surrouding the variable with htmlentities we prevent XSS in the input fields
+        //htmlentites function encodes all possible characters, eg: ˝ -> &Euml; and  " -> &quot;
+        $user    = htmlentities($request->post('user'));
+        $pass    = htmlentities($request->post('pass'));
 
         if ($this->auth->checkCredentials($user, $pass)) {
             $_SESSION['user'] = $user;
