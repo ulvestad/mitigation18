@@ -74,9 +74,9 @@ class Auth
      * Is currently logged in user admin?
      */
     public function isAdmin()
-    {
+    {   
         if ($this->check()){
-            $user = User::findByUser($_SESSION[’user ’]);
+            $user = User::findByUser($_SESSION[’user’]);
             if ( $user !== null ) {
                 return $user->isAdmin();
             }
