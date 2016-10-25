@@ -32,7 +32,9 @@ class PatentsController extends Controller
         $username = $_SESSION['user'];
         $user = $this->userRepository->findByUser($username);
         $request = $this->app->request;
-        $message = $request->get('msg');
+        //surrouding the variable with htmlentities we prevent XSS in the input fields
+        //htmlentites function encodes all possible characters, eg: ˝ -> &Euml; and  " -> &quot;
+        $message = htmlentities(($request->get('msg'));
         $variables = [];
 
         if($message) {
@@ -69,7 +71,7 @@ class PatentsController extends Controller
             $this->app->redirect("/login");
         } else {
             $request     = $this->app->request;
-            //surrouding the variable with htmlentities we prevent XSS in the input fields of the "http://tdt4237.idi.ntnu.no:5018/patents/new"
+            //surrouding the variable with htmlentities we prevent XSS in the input fields
             //htmlentites function encodes all possible characters, eg: ˝ -> &Euml; and  " -> &quot;
             $title       = htmlentities($request->post('title'));
             $description = htmlentities($request->post('description'));
