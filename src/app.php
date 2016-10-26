@@ -21,14 +21,6 @@ $app = new Slim([
 
 ]);
 
-$c = $app->getContainer();
-$c['errorHandler'] = function ($c) {
-    return function ($request, $response, $exception) use ($c) {
-        return $c['response']->withStatus(500)
-                             ->withHeader('Content-Type', 'text/html')
-                             ->write('Something went wrong!');
-    };
-};
 
 $view = $app->view();
 $view->parserExtensions = array(
