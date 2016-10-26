@@ -5,6 +5,7 @@ namespace tdt4237\webapp\repository;
 use PDO;
 use tdt4237\webapp\models\Patent;
 use tdt4237\webapp\models\PatentCollection;
+use tdt4237\webapp\Auth;
 
 class PatentRepository
 {
@@ -68,7 +69,13 @@ class PatentRepository
     }
 
     public function deleteByPatentid($patentId)
-    {
+    {   
+        if (! Auth::isAdmin()) {
+            $this->app->flash('info', "You must be administrator delete patents.");
+            $this->app->redirect('/');
+            return;
+        }
+
         return $this->pdo->exec(
             sprintf("DELETE FROM patent WHERE patentid='%s';", $patentId));
     }
