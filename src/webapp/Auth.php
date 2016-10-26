@@ -75,11 +75,10 @@ class Auth
      */
     public function isAdmin()
     {   
-        if ($this->check()){
-            $user = User::findByUser($_SESSION[’user’]);
-            if ( $user !== null ) {
-                return $user->isAdmin();
-            }
+        if (self::check() && isset($_SESSION['isAdmin'])) {
+            return $_SESSION['isAdmin'];
+        } else {
+            return false;
         }
 
         throw new Exception('Not logged in but called Auth::isAdmin() anyway');
