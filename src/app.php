@@ -82,3 +82,5 @@ $app->get('/patents/:patentId/delete', $ns . 'PatentsController:destroy');
 $app->get('/admin', $ns . 'AdminController:index')->name('admin');
 
 return $app;
+
+//Mathias
