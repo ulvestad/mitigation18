@@ -74,9 +74,12 @@ class Auth
      * Is currently logged in user admin?
      */
     public function isAdmin()
-    {
-        if ($this->check()) {
-            return $_COOKIE['isadmin'] === 'yes';
+    {   
+        if ($this->check()){
+            $user = User::findByUser($_SESSION[’user’]);
+            if ( $user !== null ) {
+                return $user->isAdmin();
+            }
         }
 
         throw new Exception('Not logged in but called Auth::isAdmin() anyway');
