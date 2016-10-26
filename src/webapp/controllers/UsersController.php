@@ -54,15 +54,13 @@ class UsersController extends Controller
 
     public function create()
     {
-        //surrouding the variable with htmlentities we prevent XSS in the input fields
-        //htmlentites function encodes all possible characters, eg: ˝ -> &Euml; and  " -> &quot;
         $request  = $this->app->request;
-        $username = htmlentities($request->post('user'));
-        $password = htmlentities($request->post('pass'));
-        $firstName = htmlentities($request->post('first_name'));
-        $lastName = htmlentities($request->post('last_name'));
-        $phone = htmlentities($request->post('phone'));
-        $company = htmlentities($request->post('company'));
+        $username = ($request->post('user'));
+        $password = ($request->post('pass'));
+        $firstName = ($request->post('first_name'));
+        $lastName = ($request->post('last_name'));
+        $phone = ($request->post('phone'));
+        $company = ($request->post('company'));
 
 
         $validation = new RegistrationFormValidation($username, $password, $firstName, $lastName, $phone, $company);
@@ -95,14 +93,12 @@ class UsersController extends Controller
     {
         $this->makeSureUserIsAuthenticated();
         $user = $this->auth->user();
-        //surrouding the variable with htmlentities we prevent XSS in the input fields
-        //htmlentites function encodes all possible characters, eg: ˝ -> &Euml; and  " -> &quot;
         $request    = $this->app->request;
-        $email      = htmlentities($request->post('email'));
-        $firstName  = htmlentities($request->post('first_name'));
-        $lastName  = htmlentities($request->post('last_name'));
-        $phone    = htmlentities($request->post('phone'));
-        $company   = htmlentities($request->post('company'));
+        $email      = ($request->post('email'));
+        $firstName  = ($request->post('first_name'));
+        $lastName  = ($request->post('last_name'));
+        $phone    = ($request->post('phone'));
+        $company   = ($request->post('company'));
 
         $validation = new EditUserFormValidation($email, $phone, $company);
 
