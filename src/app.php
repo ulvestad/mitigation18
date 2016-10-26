@@ -15,10 +15,20 @@ chmod(__DIR__ . '/../web/uploads', 0777);
 
 $app = new Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
-    'debug' => true,
+    'debug' => false,
     'view' => new Twig()
 
+
 ]);
+
+$c = $app->getContainer();
+$c['errorHandler'] = function ($c) {
+    return function ($request, $response, $exception) use ($c) {
+        return $c['response']->withStatus(500)
+                             ->withHeader('Content-Type', 'text/html')
+                             ->write('Something went wrong!');
+    };
+};
 
 $view = $app->view();
 $view->parserExtensions = array(
