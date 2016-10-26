@@ -32,7 +32,7 @@ class PatentsController extends Controller
         $username = $_SESSION['user'];
         $user = $this->userRepository->findByUser($username);
         $request = $this->app->request;
-        $message = (($request->get('msg'));
+        $message = $request->get('msg');
         $variables = [];
 
         if($message) {
