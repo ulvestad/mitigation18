@@ -36,8 +36,9 @@ class PatentRepository
 
     public function find($patentId)
     {
-        $sql  = "SELECT * FROM patent WHERE patentId = $patentId";
-        $result = $this->pdo->query($sql);
+        $sql  = "SELECT * FROM patent WHERE patentId = ?";
+        $result = $this->pdo->prepare($sql);
+        $result->execute(array($patentId));
         $row = $result->fetch();
 
         if($row === false) {
@@ -69,15 +70,10 @@ class PatentRepository
     }
 
     public function deleteByPatentid($patentId)
-    {   
-        if (! Auth::isAdmin()) {
-            $this->app->flash('info', "You must be administrator delete patents.");
-            $this->app->redirect('/');
-            return;
-        }
-
-        return $this->pdo->exec(
-            sprintf("DELETE FROM patent WHERE patentid='%s';", $patentId));
+    {
+        $sql  = "DELETE FROM patent WHERE patentid = ?";
+        $result = $this->pdo->prepare($sql);
+        return $result->execute(array($patentId));
     }
 
 
@@ -88,6 +84,13 @@ class PatentRepository
         $description    = $patent->getDescription();
         $date           = $patent->getDate();
         $file           = $patent->getFile();
+
+        /*$query = "INSERT INTO patent(company, date, title, description, file) VALUES(?, ?, ?, ?, ?)";
+        $result = $this->pdo->prepare($query);
+        $values = [$company, $date, $title, $description, $file];
+        return $result->execute($values);*/
+
+
 
         if ($patent->getPatentId() === null) {
             $query = "INSERT INTO patent (company, date, title, description, file) "

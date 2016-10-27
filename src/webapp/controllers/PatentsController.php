@@ -28,23 +28,28 @@ class PatentsController extends Controller
 
     public function show($patentId)
     {
-        $patent = $this->patentRepository->find($patentId);
-        $username = $_SESSION['user'];
-        $user = $this->userRepository->findByUser($username);
-        $request = $this->app->request;
-        $message = $request->get('msg');
-        $variables = [];
+        if ($this->auth->check()) {
+            $patent = $this->patentRepository->find($patentId);
+            $username = $_SESSION['user'];
+            $user = $this->userRepository->findByUser($username);
+            $request = $this->app->request;
+            $message = $request->get('msg');
+            $variables = [];
 
-        if($message) {
-            $variables['msg'] = $message;
+            if($message) {
+                $variables['msg'] = $message;
 
+            }
+
+            $this->render('patents/show.twig', [
+                'patent' => $patent,
+                'user' => $user,
+                'flash' => $variables
+            ]);
+        } else {
+            $this->app->flash('info', "You need to be logged in to view a patent");
+            $this->app->redirect("/");
         }
-
-        $this->render('patents/show.twig', [
-            'patent' => $patent,
-            'user' => $user,
-            'flash' => $variables
-        ]);
 
     }
 
@@ -108,13 +113,14 @@ class PatentsController extends Controller
 
     public function destroy($patentId)
     {
-        if ($this->patentRepository->deleteByPatentid($patentId) === 1) {
-            $this->app->flash('info', "Sucessfully deleted '$patentId'");
-            $this->app->redirect('/admin');
-            return;
+        if ($this->auth->isAdmin()) {
+          if ($this->patentRepository->deleteByPatentid($patentId)) {
+              $this->app->flash('info', "Sucessfully deleted '$patentId'");
+              $this->app->redirect('/admin');
+              return;
+          }
         }
-
-        $this->app->flash('info', "An error ocurred. Unable to delete user '$username'.");
+        $this->app->flash('info', "Ingen tilgang");
         $this->app->redirect('/admin');
     }
 }
