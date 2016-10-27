@@ -31,8 +31,8 @@ class RegistrationFormValidation
         if (strlen($password) < 8) {
             $this->validationErrors[] = 'Password has to be at least 8 characters long';
         }
-        else if (preg_match('/^[A-Za-z0-9_]+$/', $password) === 0) {
-            $this->validationErrors[] = 'Password can only contain big and small letters and numbers';
+        else if (preg_match('/^[a-zA-Z0-9\`\~\!\@\#\$\%\^\&\*\(\)\_\-\+\=\[\]\\\|\{\}\;\:\'\"\.\,\/\<\>\?]+$/', $password) === 0) {
+            $this->validationErrors[] = "Password can only contain letters, numbers and special characters";
         }
 
         if(empty($first_name)) {
