@@ -11,12 +11,12 @@ use tdt4237\webapp\Auth;
 
 class UserRepository
 {
-    const INSERT_QUERY   = "INSERT INTO users(user, pass, first_name, last_name, phone, company, isadmin) VALUES('%s', '%s', '%s' , '%s' , '%s', '%s', '%s')";
-    const UPDATE_QUERY   = "UPDATE users SET email='%s', first_name='%s', last_name='%s', isadmin='%s', phone ='%s' , company ='%s' WHERE id='%s'";
-    const FIND_BY_NAME   = "SELECT * FROM users WHERE user='%s'";
-    const DELETE_BY_NAME = "DELETE FROM users WHERE user='%s'";
+    const INSERT_QUERY   = "INSERT INTO users(user, pass, first_name, last_name, phone, company, isadmin) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    const UPDATE_QUERY   = "UPDATE users SET email = ?, first_name = ?, last_name = ?, isadmin = ?, phone = ? , company = ? WHERE id = ?";
+    const FIND_BY_NAME   = "SELECT * FROM users WHERE user = ?";
+    const DELETE_BY_NAME = "DELETE FROM users WHERE user = ?";
     const SELECT_ALL     = "SELECT * FROM users";
-    const FIND_FULL_NAME   = "SELECT * FROM users WHERE user='%s'";
+    const FIND_FULL_NAME   = "SELECT * FROM users WHERE user = ?";
 
     /**
      * @var PDO
@@ -51,9 +51,9 @@ class UserRepository
 
     public function getNameByUsername($username)
     {
-        $query = sprintf(self::FIND_FULL_NAME, $username);
-
-        $result = $this->pdo->query($query, PDO::FETCH_ASSOC);
+        $query = self::FIND_FULL_NAME;
+        $result = $this->pdo->prepare($query);
+        $result->execute(array($username));
         $row = $result->fetch();
         $name = $row['first_name'] + " " + $row['last_name'];
         return $name;
@@ -61,10 +61,11 @@ class UserRepository
 
     public function findByUser($username)
     {
-        $query  = sprintf(self::FIND_BY_NAME, $username);
-        $result = $this->pdo->query($query, PDO::FETCH_ASSOC);
+        $query = self::FIND_BY_NAME;
+        $result = $this->pdo->prepare($query);
+        $result->execute(array($username));
         $row = $result->fetch();
-        
+
         if ($row === false) {
             return false;
         }
@@ -74,20 +75,15 @@ class UserRepository
 
     public function deleteByUsername($username)
     {
-         if (! Auth::isAdmin()) {
-            $this->app->flash('info', "You must be administrator delete users.");
-            $this->app->redirect('/');
-            return;
-        }
-        return $this->pdo->exec(
-            sprintf(self::DELETE_BY_NAME, $username)
-        );
+        $query = self::DELETE_BY_NAME;
+        $result = $this->pdo->prepare($query);
+        return $result->execute(array($username));
     }
 
     public function all()
     {
         $rows = $this->pdo->query(self::SELECT_ALL);
-        
+
         if ($rows === false) {
             return [];
             throw new \Exception('PDO error in all()');
@@ -107,20 +103,18 @@ class UserRepository
 
     public function saveNewUser(User $user)
     {
-        $query = sprintf(
-            self::INSERT_QUERY, $user->getUsername(), $user->getHash(), $user->getFirstName(), $user->getLastName(), $user->getPhone(), $user->getCompany(), $user->isAdmin()
-        );
-
-        return $this->pdo->exec($query);
+        $query = self::INSERT_QUERY;
+        $result = $this->pdo->prepare($query);
+        $values = [$user->getUsername(), $user->getHash(), $user->getFirstName(), $user->getLastName(), $user->getPhone(), $user->getCompany(), $user->isAdmin()];
+        return $result->execute($values);
     }
 
     public function saveExistingUser(User $user)
     {
-        $query = sprintf(
-            self::UPDATE_QUERY, $user->getEmail(), $user->getFirstName(), $user->getLastName(), $user->isAdmin(), $user->getPhone(), $user->getCompany(), $user->getUserId()
-        );
-
-        return $this->pdo->exec($query);
+        $query = self::UPDATE_QUERY;
+        $result = $this->pdo->prepare($query);
+        $values = [$user->getEmail(), $user->getFirstName(), $user->getLastName(), $user->isAdmin(), $user->getPhone(), $user->getCompany(), $user->getUserId()];
+        return $result->execute($values);
     }
 
 }
