@@ -84,7 +84,8 @@ class PatentsController extends Controller
                 $patent->setDate($date);
                 $patent->setFile($file);
                 $savedPatent = $this->patentRepository->save($patent);
-                $this->app->redirect('/patents/' . $savedPatent . '?msg="Patent succesfully registered');
+                $url = htmlentities('/patents/' . $savedPatent . '?msg="Patent succesfully registered')
+                $this->app->redirect($url);
             }
         }
 
