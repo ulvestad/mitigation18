@@ -41,6 +41,7 @@ class Auth
      */
     public function check()
     {
+        session_regenerate_id();
         return isset($_SESSION['user']);
     }
 
@@ -74,17 +75,18 @@ class Auth
      * Is currently logged in user admin?
      */
     public function isAdmin()
-    {   
-       if (self::check()) {
-            return Auth::user()->isAdmin();
+    {
+      if(isset($_SESSION['user'])) {
+      $user = $this->userRepository->findByUser($_SESSION['user']);
+        if($user !== null) {
+          return $user->isAdmin();
         }
-        
-        throw new Exception('Not logged in but called Auth::isAdmin() anyway');
+      }
     }
 
     public function logout()
     {
-        if($this->guest()) {
+        if(!$this->guest()) {
             session_destroy();
         }
     }

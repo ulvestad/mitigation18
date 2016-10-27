@@ -7,7 +7,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class Hash
 {
 
-    static $salt = "password";
+    //Trenger ikke et eget salt når BCRYPT brukes
+    //static $salt = "password";
 
 
     public function __construct()
@@ -16,13 +17,15 @@ class Hash
 
     public static function make($plaintext)
     {
-        return hash('sha1', $plaintext . Hash::$salt);
+        //Bruker BCRYPT til hashing isteden for SHA1
+        return password_hash($plaintext, PASSWORD_BCRYPT);
 
     }
 
     public function check($plaintext, $hash)
     {
-        return $this->make($plaintext) === $hash;
+        //password_verify returnerer true dersom plaintext parametret stemmer med $hash parametret
+        return password_verify($plaintext, $hash);
     }
 
 }

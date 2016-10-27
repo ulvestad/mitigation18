@@ -5,7 +5,7 @@ namespace tdt4237\webapp\controllers;
 class Controller
 {
     protected $app;
-    
+
     protected $userRepository;
     protected $auth;
     protected $patentRepository;
