@@ -17,8 +17,6 @@ $app = new Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
     'debug' => false,
     'view' => new Twig()
-
-
 ]);
 
 
