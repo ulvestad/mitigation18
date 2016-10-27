@@ -50,7 +50,7 @@ class Auth
         return $_SESSION['user'];
         }
     }
-
+ 
     /**
      * Check if the person is a guest.
      */
