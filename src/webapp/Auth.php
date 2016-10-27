@@ -49,7 +49,7 @@ class Auth
         return $_SESSION['user'];
         }
     }
-
+ 
     /**
      * Check if the person is a guest.
      */
@@ -75,12 +75,10 @@ class Auth
      */
     public function isAdmin()
     {   
-        if (self::check() && isset($_SESSION['isAdmin'])) {
-            return $_SESSION['isAdmin'];
-        } else {
-            return false;
+       if (self::check()) {
+            return Auth::user()->isAdmin();
         }
-
+        
         throw new Exception('Not logged in but called Auth::isAdmin() anyway');
     }
 
