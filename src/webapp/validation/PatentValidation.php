@@ -8,8 +8,8 @@ class PatentValidation {
 
     private $validationErrors = [];
 
-    public function __construct($company, $title) {
-        return $this->validate($company, $title);
+    public function __construct($company, $title, $file) {
+        return $this->validate($company, $title, $file);
     }
 
     public function isGoodToGo()
@@ -22,7 +22,7 @@ class PatentValidation {
     return $this->validationErrors;
     }
 
-    public function validate($company, $title)
+    public function validate($company, $title, $file)
     {
         if ($company == null) {
             $this->validationErrors[] = "Company/User needed";
@@ -30,6 +30,10 @@ class PatentValidation {
         }
         if ($title == null) {
             $this->validationErrors[] = "Title needed";
+        }
+        $ext = pathinfo($filename);
+        if( $ext['extension'] !== 'pdf' || $ext['extension'] !== 'doc' || $ext['extension'] !== 'txt' ) {
+            $this->validationErrors[] = "The filetype has to be .pdf, .doc or .txt";
         }
 
         return $this->validationErrors;
