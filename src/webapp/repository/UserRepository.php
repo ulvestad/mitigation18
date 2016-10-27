@@ -7,6 +7,7 @@ use tdt4237\webapp\models\Phone;
 use tdt4237\webapp\models\Email;
 use tdt4237\webapp\models\NullUser;
 use tdt4237\webapp\models\User;
+use tdt4237\webapp\Auth;
 
 class UserRepository
 {
@@ -73,6 +74,11 @@ class UserRepository
 
     public function deleteByUsername($username)
     {
+         if (! Auth::isAdmin()) {
+            $this->app->flash('info', "You must be administrator delete users.");
+            $this->app->redirect('/');
+            return;
+        }
         return $this->pdo->exec(
             sprintf(self::DELETE_BY_NAME, $username)
         );

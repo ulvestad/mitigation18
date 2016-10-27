@@ -49,7 +49,7 @@ class Auth
         return $_SESSION['user'];
         }
     }
-
+ 
     /**
      * Check if the person is a guest.
      */
@@ -74,11 +74,11 @@ class Auth
      * Is currently logged in user admin?
      */
     public function isAdmin()
-    {
-        if ($this->check()) {
-            return $_COOKIE['isadmin'] === 'yes';
+    {   
+       if (self::check()) {
+            return Auth::user()->isAdmin();
         }
-
+        
         throw new Exception('Not logged in but called Auth::isAdmin() anyway');
     }
 

@@ -15,10 +15,12 @@ chmod(__DIR__ . '/../web/uploads', 0777);
 
 $app = new Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
-    'debug' => true,
+    'debug' => false,
     'view' => new Twig()
 
+
 ]);
+
 
 $view = $app->view();
 $view->parserExtensions = array(
@@ -82,5 +84,3 @@ $app->get('/patents/:patentId/delete', $ns . 'PatentsController:destroy');
 $app->get('/admin', $ns . 'AdminController:index')->name('admin');
 
 return $app;
-
-//Mathias
