@@ -11,12 +11,14 @@ use tdt4237\webapp\Auth;
 
 class UserRepository
 {
-    const INSERT_QUERY   = "INSERT INTO users(user, pass, first_name, last_name, phone, company, isadmin) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    const INSERT_QUERY   = "INSERT INTO users(user, pass, first_name, last_name, phone, company, isadmin, lastLoginAttempt) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     const UPDATE_QUERY   = "UPDATE users SET email = ?, first_name = ?, last_name = ?, isadmin = ?, phone = ? , company = ? WHERE id = ?";
     const FIND_BY_NAME   = "SELECT * FROM users WHERE user = ?";
     const DELETE_BY_NAME = "DELETE FROM users WHERE user = ?";
     const SELECT_ALL     = "SELECT * FROM users";
     const FIND_FULL_NAME   = "SELECT * FROM users WHERE user = ?";
+    const UPDATE_LAST_LOGIN_ATTEMPT   = "UPDATE users SET lastLoginAttempt = ? WHERE user = ?";
+    const GET_LAST_LOGIN_ATTEMPT   = "SELECT lastLoginAttempt FROM users WHERE user = ?";
 
     /**
      * @var PDO
@@ -105,7 +107,7 @@ class UserRepository
     {
         $query = self::INSERT_QUERY;
         $result = $this->pdo->prepare($query);
-        $values = [$user->getUsername(), $user->getHash(), $user->getFirstName(), $user->getLastName(), $user->getPhone(), $user->getCompany(), $user->isAdmin()];
+        $values = [$user->getUsername(), $user->getHash(), $user->getFirstName(), $user->getLastName(), $user->getPhone(), $user->getCompany(), $user->isAdmin(), 0];
         return $result->execute($values);
     }
 
@@ -114,6 +116,27 @@ class UserRepository
         $query = self::UPDATE_QUERY;
         $result = $this->pdo->prepare($query);
         $values = [$user->getEmail(), $user->getFirstName(), $user->getLastName(), $user->isAdmin(), $user->getPhone(), $user->getCompany(), $user->getUserId()];
+        return $result->execute($values);
+    }
+
+    public function getLastLoginAttempt($username)
+    {
+        $query = self::GET_LAST_LOGIN_ATTEMPT;
+        $result = $this->pdo->prepare($query);
+        $result->execute(array($username));
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        return $row['lastLoginAttempt'];
+
+    }
+
+    public function updateLastLoginAttempt($username)
+    {
+        $query = self::UPDATE_LAST_LOGIN_ATTEMPT;
+        $result = $this->pdo->prepare($query);
+        $d = new \DateTime();
+        $d->add(new \DateInterval('PT10S'));
+        $d = $d->format('U');
+        $values = [$d, $username];
         return $result->execute($values);
     }
 
