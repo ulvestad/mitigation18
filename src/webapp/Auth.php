@@ -27,13 +27,24 @@ class Auth
 
     public function checkCredentials($username, $password)
     {
-        $user = $this->userRepository->findByUser($username);
-
-        if ($user === false) {
-            return false;
+        $d = new \DateTime();
+        $d = $d->format('U');
+        print_r($this->userRepository->getLastLoginAttempt($username));
+        if ($this->userRepository->getLastLoginAttempt($username) > $d) {
+            return 2;
         }
 
-        return $this->hash->check($password, $user->getHash());
+        $user = $this->userRepository->findByUser($username);
+        if ($user === false) {
+            return 1;
+        }
+
+        if ($this->hash->check($password, $user->getHash())) {
+          return 0;
+        } else {
+          $this->userRepository->updateLastLoginAttempt($username);
+          return 1;
+        }
     }
 
     /**

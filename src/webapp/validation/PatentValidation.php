@@ -31,7 +31,8 @@ class PatentValidation {
         if ($title == null) {
             $this->validationErrors[] = "Title needed";
         }
-        if(!empty(pathinfo( $file, PATHINFO_EXTENSION)){
+
+        if(!empty(pathinfo( $file, PATHINFO_EXTENSION))){
             $ext = pathinfo( $file, PATHINFO_EXTENSION);
             if( $ext == 'pdf' || $ext == 'doc' || $ext == 'txt' ) {
                 return;
