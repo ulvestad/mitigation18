@@ -36,8 +36,9 @@ class PatentRepository
 
     public function find($patentId)
     {
-        $sql  = "SELECT * FROM patent WHERE patentId = $patentId";
-        $result = $this->pdo->query($sql);
+        $sql  = "SELECT * FROM patent WHERE patentId = ?";
+        $result = $this->pdo->prepare($sql);
+        $result->execute(array($patentId));
         $row = $result->fetch();
 
         if($row === false) {
@@ -69,15 +70,10 @@ class PatentRepository
     }
 
     public function deleteByPatentid($patentId)
-    {   
-        if (! Auth::isAdmin()) {
-            $this->app->flash('info', "You must be administrator delete patents.");
-            $this->app->redirect('/');
-            return;
-        }
-
-        return $this->pdo->exec(
-            sprintf("DELETE FROM patent WHERE patentid='%s';", $patentId));
+    {
+        $sql  = "DELETE FROM patent WHERE patentid = ?";
+        $result = $this->pdo->prepare($sql);
+        return $result->execute(array($patentId));
     }
 
 
@@ -89,12 +85,33 @@ class PatentRepository
         $date           = $patent->getDate();
         $file           = $patent->getFile();
 
-        if ($patent->getPatentId() === null) {
-            $query = "INSERT INTO patent (company, date, title, description, file) "
-                . "VALUES ('$company', '$date', '$title', '$description', '$file')";
+        //NOT NULL Constraint på kolonnene over blir sint om vi laster opp en patent uten fil
+        if ($file === null) {
+            $file = '';
         }
 
-        $this->pdo->exec($query);
-        return $this->pdo->lastInsertId();
+        $query = "INSERT INTO patent (company, date, title, description, file) VALUES (?, ?, ?, ?, ?)";
+        $result = $this->pdo->prepare($query);
+        $values = [$company, $date, $title, $description, $file];
+        return $result->execute($values);
+
+    }
+
+    public function search($text)
+    {
+        $sql  = "SELECT * FROM patent WHERE title LIKE ? OR company LIKE ?";
+        $result = $this->pdo->prepare($sql);
+        $text = $text . "%";
+        $values = [$text, $text];
+        $row = $result->execute($values);
+        $row = $result->fetchAll();
+
+        if($row === false) {
+            return false;
+        }
+
+        return new PatentCollection(
+            array_map([$this, 'makePatentFromRow'], $row)
+            );
     }
 }

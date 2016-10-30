@@ -30,15 +30,20 @@ class SessionsController extends Controller
         $user    = ($request->post('user'));
         $pass    = ($request->post('pass'));
 
-        if ($this->auth->checkCredentials($user, $pass)) {
+        $loginStatus = $this->auth->checkCredentials($user, $pass);
+
+        if ($loginStatus === 0) {
             $_SESSION['user'] = $user;
             $this->app->flash('info', "You are now successfully logged in as $user.");
             $this->app->redirect('/');
             return;
+        } elseif ($loginStatus === 1) {
+          $this->app->flashNow('error', 'Incorrect user/pass combination.');
+          $this->render('sessions/new.twig', []);
+        } elseif ($loginStatus === 2) {
+          $this->app->flashNow('error', 'Please wait 10seconds before trying again.');
+          $this->render('sessions/new.twig', []);
         }
-
-        $this->app->flashNow('error', 'Incorrect user/pass combination.');
-        $this->render('sessions/new.twig', []);
     }
 
     public function destroy()
