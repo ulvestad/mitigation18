@@ -17,8 +17,6 @@ $app = new Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
     'debug' => false,
     'view' => new Twig()
-
-
 ]);
 
 
@@ -72,6 +70,9 @@ $app->post('/profile/edit', $ns . 'UsersController:update');
 
 // Patents
 $app->get('/patents', $ns . 'PatentsController:index')->name('showpatents');
+
+$app->get('/patents', $ns . 'PatentsController:newsearch')->name('search');
+$app->post('/patents', $ns . 'PatentsController:showsearch');
 
 $app->get('/patents/new', $ns . 'PatentsController:newpatent')->name('registerpatent');
 $app->post('/patents/new', $ns . 'PatentsController:create');

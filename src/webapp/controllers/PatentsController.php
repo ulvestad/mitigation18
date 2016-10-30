@@ -78,7 +78,7 @@ class PatentsController extends Controller
             $description = ($request->post('description'));
             $company     = ($request->post('company'));
             $date        = date("dmY");
-            $file = $this -> startUpload();
+            $file        = $this->startUpload();
 
             $validation = new PatentValidation($title, $description, $file);
             if ($validation->isGoodToGo()) {
@@ -122,5 +122,33 @@ class PatentsController extends Controller
         }
         $this->app->flash('info', "Ingen tilgang");
         $this->app->redirect('/admin');
+    }
+
+    public function showsearch()
+    {
+        if(isset($_POST['searchText'])){
+            $text = $_POST['searchText'];
+        }
+        $patent = $this->patentRepository->search($text);
+        if($patent != null)
+        {
+            $patent->sortByCompany();
+        }
+        $users = $this->userRepository->all();
+        $this->render('patents/index.twig', ['patent' => $patent, 'users' => $users]);
+    }
+
+    public function newsearch()
+    {
+
+        if ($this->auth->check()) {
+            $username = $_SESSION['user'];
+            $this->render('patents/new.twig', ['username' => $username]);
+        } else {
+
+            $this->app->flash('error', "You need to be logged in to search a patent");
+            $this->app->redirect("/");
+        }
+
     }
 }

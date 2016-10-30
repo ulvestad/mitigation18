@@ -13,4 +13,10 @@ class PatentCollection extends ArrayObject
             return strcmp($a->getDate(), $b->getDate());
         });
     }
+    public function sortByCompany()
+    {
+        $this->uasort(function (Patent $a, Patent $b) {
+            return strcmp($a->getCompany(), $b->getCompany());
+        });
+    }
 }

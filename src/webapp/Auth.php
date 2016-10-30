@@ -53,7 +53,7 @@ class Auth
      */
     public function check()
     {
-        session_regenerate_id(true);
+        session_regenerate_id();
         return isset($_SESSION['user']);
     }
 

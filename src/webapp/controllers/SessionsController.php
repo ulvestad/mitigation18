@@ -44,7 +44,6 @@ class SessionsController extends Controller
           $this->app->flashNow('error', 'Please wait 10seconds before trying again.');
           $this->render('sessions/new.twig', []);
         }
-
     }
 
     public function destroy()

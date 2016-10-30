@@ -85,19 +85,33 @@ class PatentRepository
         $date           = $patent->getDate();
         $file           = $patent->getFile();
 
-        /*$query = "INSERT INTO patent(company, date, title, description, file) VALUES(?, ?, ?, ?, ?)";
-        $result = $this->pdo->prepare($query);
-        $values = [$company, $date, $title, $description, $file];
-        return $result->execute($values);*/
-
-
-
-        if ($patent->getPatentId() === null) {
-            $query = "INSERT INTO patent (company, date, title, description, file) "
-                . "VALUES ('$company', '$date', '$title', '$description', '$file')";
+        //NOT NULL Constraint på kolonnene over blir sint om vi laster opp en patent uten fil
+        if ($file === null) {
+            $file = '';
         }
 
-        $this->pdo->exec($query);
-        return $this->pdo->lastInsertId();
+        $query = "INSERT INTO patent (company, date, title, description, file) VALUES (?, ?, ?, ?, ?)";
+        $result = $this->pdo->prepare($query);
+        $values = [$company, $date, $title, $description, $file];
+        return $result->execute($values);
+
+    }
+
+    public function search($text)
+    {
+        $sql  = "SELECT * FROM patent WHERE title LIKE ? OR company LIKE ?";
+        $result = $this->pdo->prepare($sql);
+        $text = $text . "%";
+        $values = [$text, $text];
+        $row = $result->execute($values);
+        $row = $result->fetchAll();
+
+        if($row === false) {
+            return false;
+        }
+
+        return new PatentCollection(
+            array_map([$this, 'makePatentFromRow'], $row)
+            );
     }
 }
