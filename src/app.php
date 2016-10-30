@@ -44,9 +44,6 @@ $app->userRepository = new UserRepository($app->db);
 $app->patentRepository = new PatentRepository($app->db);
 $app->auth = new Auth($app->userRepository, $app->hash);
 
-session.use_trans_sid = 0;
-session.use_only_cookies = 1;
-
 $ns ='tdt4237\\webapp\\controllers\\';
 
 // Static pages
