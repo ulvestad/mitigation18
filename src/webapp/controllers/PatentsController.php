@@ -117,4 +117,32 @@ class PatentsController extends Controller
         $this->app->flash('info', "An error ocurred. Unable to delete user '$username'.");
         $this->app->redirect('/admin');
     }
+    
+    public function showsearch()
+    {
+        if(isset($_POST['searchText'])){
+            $text = $_POST['searchText'];
+        }
+        $patent = $this->patentRepository->search($text);
+        if($patent != null)
+        {
+            $patent->sortByCompany();
+        }
+        $users = $this->userRepository->all();
+        $this->render('patents/index.twig', ['patent' => $patent, 'users' => $users]);
+    }
+    
+    public function newsearch()
+    {
+
+        if ($this->auth->check()) {
+            $username = $_SESSION['user'];
+            $this->render('patents/new.twig', ['username' => $username]);
+        } else {
+
+            $this->app->flash('error', "You need to be logged in to search a patent");
+            $this->app->redirect("/");
+        }
+
+    }
 }
