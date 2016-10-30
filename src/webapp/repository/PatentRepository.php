@@ -97,4 +97,18 @@ class PatentRepository
         $this->pdo->exec($query);
         return $this->pdo->lastInsertId();
     }
+     public function search($text)
+    {
+        $sql  = "SELECT * FROM patent WHERE title LIKE '$text%' OR company LIKE '$text%'";
+        $result = $this->pdo->query($sql);
+        $row = $result->fetchAll();
+
+        if($row === false) {
+            return false;
+        }
+
+        return new PatentCollection(
+            array_map([$this, 'makePatentFromRow'], $row)
+            );
+    }
 }

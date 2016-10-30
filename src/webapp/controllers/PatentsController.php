@@ -123,7 +123,7 @@ class PatentsController extends Controller
         if(isset($_POST['searchText'])){
             $text = $_POST['searchText'];
         }
-        $patent = $this->patentRepository->all();
+        $patent = $this->patentRepository->search($text);
         if($patent != null)
         {
             $patent->sortByCompany();
