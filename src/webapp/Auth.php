@@ -34,17 +34,16 @@ class Auth
             return 2;
         }
 
-        $user = $this->userRepository->findByUser($username);
-
-        if ($user === false) {
-            return 1;
-        }
-
         if ($this->hash->check($password, $user->getHash())) {
           return 0;
         } else {
           $this->userRepository->updateLastLoginAttempt($username);
           return 1;
+        }
+
+        $user = $this->userRepository->findByUser($username);
+        if ($user === false) {
+            return 1;
         }
     }
 
